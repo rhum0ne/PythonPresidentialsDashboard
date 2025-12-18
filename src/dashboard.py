@@ -1,6 +1,6 @@
 import pandas as pd
-import dash
 from dash import Dash, Input, Output, html, dcc
+import dash_bootstrap_components as dbc
 import plotly.express as px
 import requests
 from interpreter import Interpreter
@@ -24,24 +24,41 @@ def launchDashboard():
     # -------------------------------------------------------------------
     # 3. App Dash
     # -------------------------------------------------------------------
-    app = dash.Dash(__name__)
+    app = Dash(__name__)
 
     app.layout = html.Div(
         [
             html.H1("Votes élections législatives - Carte de France"),
-            dcc.Dropdown(
-                id="variable",
-                options=[
-                    {"label": "Inscrits", "value": "Inscrits"},
-                    {"label": "Votants", "value": "Votants"},
-                    {"label": "Abstentions", "value": "Abstentions"},
-                    {"label": "Blancs", "value": "Blancs"},
-                    {"label": "Nuls", "value": "Nuls"},
-                ],
-                value="Votants",
-                clearable=False,
-            ),
-            dcc.Graph(id="carte_france"),
+            dbc.Row(
+                [
+                    dbc.Col([
+                        dcc.Dropdown(
+                            id="variable",
+                            options=[
+                                {"label": "Inscrits", "value": "Inscrits"},
+                                {"label": "Votants", "value": "Votants"},
+                                {"label": "Abstentions", "value": "Abstentions"},
+                                {"label": "Blancs", "value": "Blancs"},
+                                {"label": "Nuls", "value": "Nuls"},
+                            ],
+                            value="Votants",
+                            clearable=False,
+                        ),
+                        dcc.Graph(id="carte_france"),
+                    ]),
+                    dbc.Col([
+                        dcc.Dropdown(
+                            id="year",
+                            options=[
+                                {"label": 2022, "value": 2022},
+                                {"label": 2024, "value": 2024}
+                            ],
+                            value="Année",
+                            clearable=False
+                        )
+                    ],)
+                ]
+            )
         ]
     )
 
