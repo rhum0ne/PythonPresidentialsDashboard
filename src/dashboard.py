@@ -1,48 +1,71 @@
-
-
-import plotly_express as px
-
+import pandas as pd
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
-
-year = 2002
-
-gapminder = px.data.gapminder() # (1)
-years = gapminder["year"].unique()
-data = { year:gapminder.query("year == @year") for year in years} # (2)
+from dash import Dash, Input, Output, html, dcc
+import plotly.express as px
+import requests
+from interpreter import Interpreter
 
 def launchDashboard():
-    app = dash.Dash(__name__) # (3)
+    print("Lancement du dashboard...")
+    interpreter = Interpreter()
+    df_dep = interpreter.getFirst() 
 
-    fig = px.scatter(data[year], x="gdpPercap", y="lifeExp",
-                        color="continent",
-                        size="pop",
-                        hover_name="country") # (4)
+    print(df_dep)
 
+    # -------------------------------------------------------------------
+    # 2. Charger le geojson des départements
+    # -------------------------------------------------------------------
+    geojson_url = (
+        "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/"
+        "departements.geojson"
+    )
+    departements_geojson = requests.get(geojson_url).json()
 
-    app.layout = html.Div(children=[
+    # -------------------------------------------------------------------
+    # 3. App Dash
+    # -------------------------------------------------------------------
+    app = dash.Dash(__name__)
 
-                            html.H1(children=f'Life expectancy vs GDP per capita ({year})',
-                                        style={'textAlign': 'center', 'color': '#7FDBFF'}), # (5)
-
-                            dcc.Graph(
-                                id='graph1',
-                                figure=fig
-                            ), # (6)
-
-                            html.Div(children=f'''
-                                The graph above shows relationship between life expectancy and
-                                GDP per capita for year {year}. Each continent data has its own
-                                colour and symbol size is proportionnal to country population.
-                                Mouse over for details.
-                            '''), # (7)
-
-    ]
+    app.layout = html.Div(
+        [
+            html.H1("Votes élections législatives - Carte de France"),
+            dcc.Dropdown(
+                id="variable",
+                options=[
+                    {"label": "Inscrits", "value": "Inscrits"},
+                    {"label": "Votants", "value": "Votants"},
+                    {"label": "Abstentions", "value": "Abstentions"},
+                    {"label": "Blancs", "value": "Blancs"},
+                    {"label": "Nuls", "value": "Nuls"},
+                ],
+                value="Votants",
+                clearable=False,
+            ),
+            dcc.Graph(id="carte_france"),
+        ]
     )
 
-    #
-    # RUN APP
-    #
+    # -------------------------------------------------------------------
+    # 4. Callback de mise à jour
+    # -------------------------------------------------------------------
+    @app.callback(
+        Output("carte_france", "figure"),
+        Input("variable", "value"),
+    )
+    def update_map(variable):
+        fig = px.choropleth_mapbox(
+            df_dep,
+            geojson=departements_geojson,
+            locations="Code département",
+            featureidkey="properties.code",
+            color=variable,
+            mapbox_style="carto-positron",
+            zoom=5,
+            center={"lat": 46.5, "lon": 2.5},
+            opacity=0.7,
+            color_continuous_scale="Viridis",
+        )
+        fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+        return fig
 
-    app.run(debug=True) # (8)
+    return app
