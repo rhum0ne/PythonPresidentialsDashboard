@@ -2,11 +2,20 @@ import pandas as pd
 from interpreter import Interpreter;
 
 class FirstInterpreter(Interpreter):
-    def getFirst(self):
-        df2024_t1 = pd.read_csv(
-            "data/2024/1/resultats-definitifs-par-circonscriptions-legislatives.csv",
-            sep=";",
+    def __init__(self, year: int):
+        self._year = year
+
+    @property
+    def year(self) -> int:
+        return self._year
+
+    def getFirst(self, tour: int = 1) -> pd.DataFrame:
+        path = (
+            f"data/{self.year}/{tour}/"
+            "resultats-definitifs-par-circonscriptions-legislatives.csv"
         )
+
+        df = pd.read_csv(path, sep=";")
 
         # Colonnes utiles
         colonnes_utiles = [
@@ -21,7 +30,7 @@ class FirstInterpreter(Interpreter):
             "Nuls",
         ]
         # Récupération des colonnes utiles
-        df2024_t1_clean = df2024_t1[colonnes_utiles].copy()
+        df2024_t1_clean = df[colonnes_utiles].copy()
 
         # Normalisation des codes département
         df2024_t1_clean["Code département"] = (

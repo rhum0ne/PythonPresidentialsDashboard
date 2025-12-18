@@ -3,11 +3,12 @@ import dash
 from dash import Dash, Input, Output, html, dcc
 import plotly.express as px
 import requests
-from firstInterpreter import FirstInterpreter
+from interpreter import Interpreter
+from data import getData
 
 def launchDashboard():
     print("Lancement du dashboard...")
-    interpreter = FirstInterpreter()
+    interpreter = getData(2024)
     df_dep = interpreter.getFirst() 
 
     print(df_dep)
