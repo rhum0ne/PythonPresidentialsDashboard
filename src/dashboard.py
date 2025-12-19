@@ -4,11 +4,14 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import requests
 from interpreter import Interpreter
+from components.dashboard.franceGraph import FranceGraph
 
 def launchDashboard():
     print("Lancement du dashboard...")
     interpreter = Interpreter()
     df_dep = interpreter.getFirst() 
+
+    france_graph = FranceGraph()
 
     print(df_dep)
 
@@ -31,34 +34,30 @@ def launchDashboard():
             html.H1("Votes élections législatives - Carte de France"),
             dbc.Row(
                 [
-                    dbc.Col([
-                        dcc.Dropdown(
-                            id="variable",
-                            options=[
-                                {"label": "Inscrits", "value": "Inscrits"},
-                                {"label": "Votants", "value": "Votants"},
-                                {"label": "Abstentions", "value": "Abstentions"},
-                                {"label": "Blancs", "value": "Blancs"},
-                                {"label": "Nuls", "value": "Nuls"},
-                            ],
-                            value="Votants",
-                            clearable=False,
-                        ),
-                        dcc.Graph(id="carte_france"),
-                    ]),
-                    dbc.Col([
-                        dcc.Dropdown(
-                            id="year",
-                            options=[
-                                {"label": 2022, "value": 2022},
-                                {"label": 2024, "value": 2024}
-                            ],
-                            value="Année",
-                            clearable=False
-                        )
-                    ],)
-                ]
-            )
+                    dbc.Col(
+                        [
+                            france_graph.getDropdown(),
+                            france_graph.getGraph()
+                        ], 
+                        style=france_graph.getStyle()
+                    ),
+                    dbc.Col(
+                        [
+                            dcc.Dropdown(
+                                id="year",
+                                options=[
+                                    {"label": 2022, "value": 2022},
+                                    {"label": 2024, "value": 2024}
+                                ],
+                                value="selected_year",
+                                clearable=False
+                            )
+                        ],
+                        style={'width': '45%'}
+                    )
+                ],
+                style={'display': 'flex', 'justifyContent': 'space-around'}
+            ),
         ]
     )
 
@@ -84,5 +83,26 @@ def launchDashboard():
         )
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
         return fig
+
+    @app.callback(
+        Output("store_year", "placeholder"),
+        Input("year", "value"),
+    )
+    def update_year(variable):
+        print("year changed")
+        # fig = px.choropleth_mapbox(
+        #     df_dep,
+        #     geojson=departements_geojson,
+        #     locations="Code département",
+        #     featureidkey="properties.code",
+        #     color=variable,
+        #     mapbox_style="carto-positron",
+        #     zoom=5,
+        #     center={"lat": 46.5, "lon": 2.5},
+        #     opacity=0.7,
+        #     color_continuous_scale="Viridis",
+        # )
+        # fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+        # return fig
 
     return app
