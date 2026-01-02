@@ -48,7 +48,9 @@ def launchDashboard():
                     ),
                     dbc.Col(
                         [
+                            html.P("Année :"),
                             year_selector.getDropdown(),
+                            html.P("Tour :"),
                             round_selector.getDropdown(),
                             html.Div(id="invisible_debug_year", style={'display': 'none'}),
                             html.Div(id="invisible_debug_round", style={'display': 'none'}),
