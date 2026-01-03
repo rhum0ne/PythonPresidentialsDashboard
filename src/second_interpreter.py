@@ -1,8 +1,8 @@
 import pandas as pd
 from interpreter import Interpreter;
 
-class FirstInterpreter(Interpreter):
-    def __init__(self, year: int, file_name: str = "data.csv"):
+class SecondInterpreter(Interpreter):
+    def __init__(self, year: int, file_name: str = "data.xlsx"):
         self._year = year
         self._file_name = file_name
 
@@ -19,14 +19,14 @@ class FirstInterpreter(Interpreter):
             f"data/{self.year}/{tour}/{self.file_name}"
         )
 
-        df = pd.read_csv(path, sep=";")
+        df = pd.read_excel(path)
 
         # Colonnes utiles
         colonnes_utiles = [
-            "Code département",
-            "Libellé département",
-            "Code circonscription législative",
-            "Libellé circonscription législative",
+            "Code du département",
+            "Libellé du département",
+            "Code de la circonscription",
+            "Libellé de la circonscription",
             "Inscrits",
             "Abstentions",
             "Votants",
@@ -37,13 +37,13 @@ class FirstInterpreter(Interpreter):
         df2024_t1_clean = df[colonnes_utiles].copy()
 
         # Normalisation des codes département
-        df2024_t1_clean["Code département"] = (
-            df2024_t1_clean["Code département"].astype(str).str.zfill(2)
+        df2024_t1_clean["Code du département"] = (
+            df2024_t1_clean["Code du département"].astype(str).str.zfill(2)
         )
 
         # Agrégation par département
         df_dep = (
-            df2024_t1_clean.groupby("Code département", as_index=False)
+            df2024_t1_clean.groupby("Code du département", as_index=False)
             .agg(
                 {
                     "Inscrits": "sum",
@@ -59,4 +59,4 @@ class FirstInterpreter(Interpreter):
         return df_dep
     
     def getDepartmentCodeColumnName(self) -> str:
-        return "Code département"
+        return "Code du département"

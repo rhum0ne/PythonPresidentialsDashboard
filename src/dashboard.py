@@ -4,22 +4,18 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import requests
 from interpreter import Interpreter
-from data import getData
+from data import getData, getAvailableYears
 from components.dashboard.franceGraph import FranceGraph
 from components.dashboard.yearSelector import YearSelector
 from components.dashboard.roundSelector import RoundSelector
 
 def launchDashboard():
     print("Lancement du dashboard...")
-    interpreter = getData(2024)
-    df_dep = interpreter.getFirst() 
 
     france_graph = FranceGraph()
-    available_years = [2022, 2024]
+    available_years = getAvailableYears()
     year_selector = YearSelector(available_years=available_years)
     round_selector = RoundSelector()
-
-    print(df_dep)
 
     # -------------------------------------------------------------------
     # 2. Charger le geojson des départements
@@ -69,13 +65,24 @@ def launchDashboard():
     # -------------------------------------------------------------------
     @app.callback(
         Output("carte_france", "figure"),
-        Input("variable", "value"),
+        [Input("variable", "value"),
+         Input("year", "value"),
+         Input("round", "value")]
     )
-    def update_map(variable):
+    def update_map(variable, year, round_value):
+        print("update_map called")
+        print("variable changed : ", variable)
+        print("year : ", year)
+        print("round : ", round_value)
+        
+        # Récupérer les données pour l'année et le tour sélectionnés
+        interpreter = getData(year)
+        df_dep = interpreter.getGlobalData(round_value)
+        
         fig = px.choropleth_mapbox(
             df_dep,
             geojson=departements_geojson,
-            locations="Code département",
+            locations=interpreter.getDepartmentCodeColumnName(),
             featureidkey="properties.code",
             color=variable,
             mapbox_style="carto-positron",
