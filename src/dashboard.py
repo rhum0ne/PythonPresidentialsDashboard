@@ -1,15 +1,23 @@
 import pandas as pd
-import dash
 from dash import Dash, Input, Output, html, dcc
+import dash_bootstrap_components as dbc
 import plotly.express as px
 import requests
 from interpreter import Interpreter
 from data import getData
+from components.dashboard.franceGraph import FranceGraph
+from components.dashboard.yearSelector import YearSelector
+from components.dashboard.roundSelector import RoundSelector
 
 def launchDashboard():
     print("Lancement du dashboard...")
     interpreter = getData(2024)
     df_dep = interpreter.getFirst() 
+
+    france_graph = FranceGraph()
+    available_years = [2022, 2024]
+    year_selector = YearSelector(available_years=available_years)
+    round_selector = RoundSelector()
 
     print(df_dep)
 
@@ -25,24 +33,34 @@ def launchDashboard():
     # -------------------------------------------------------------------
     # 3. App Dash
     # -------------------------------------------------------------------
-    app = dash.Dash(__name__)
+    app = Dash(__name__)
 
     app.layout = html.Div(
         [
             html.H1("Votes élections législatives - Carte de France"),
-            dcc.Dropdown(
-                id="variable",
-                options=[
-                    {"label": "Inscrits", "value": "Inscrits"},
-                    {"label": "Votants", "value": "Votants"},
-                    {"label": "Abstentions", "value": "Abstentions"},
-                    {"label": "Blancs", "value": "Blancs"},
-                    {"label": "Nuls", "value": "Nuls"},
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            france_graph.getDropdown(),
+                            france_graph.getGraph()
+                        ], 
+                        style=france_graph.getStyle()
+                    ),
+                    dbc.Col(
+                        [
+                            html.P("Année :"),
+                            year_selector.getDropdown(),
+                            html.P("Tour :"),
+                            round_selector.getDropdown(),
+                            html.Div(id="invisible_debug_year", style={'display': 'none'}),
+                            html.Div(id="invisible_debug_round", style={'display': 'none'}),
+                        ],
+                        style=year_selector.getStyle()
+                    )
                 ],
-                value="Votants",
-                clearable=False,
+                style={'display': 'flex', 'justifyContent': 'space-around'}
             ),
-            dcc.Graph(id="carte_france"),
         ]
     )
 
@@ -68,5 +86,23 @@ def launchDashboard():
         )
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
         return fig
+
+    @app.callback(
+        Output("invisible_debug_year", "children"),
+        Input("year", "value"),
+    )
+    def update_year(variable):
+        year_selector.selectYear(variable)
+        print("year changed : ", year_selector.getSelectedYear())
+        return ""
+
+    @app.callback(
+        Output("invisible_debug_round", "children"),
+        Input("round", "value"),
+    )
+    def update_round(variable):
+        round_selector.selectRound(variable)
+        print("round changed : ", round_selector.getSelectedRound())
+        return ""
 
     return app
