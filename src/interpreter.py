@@ -19,3 +19,7 @@ class Interpreter(ABC):
     @abstractmethod
     def getDepartmentCodeColumnName(self) -> str:
         raise NotImplementedError("Subclasses must implement getDepartmentCodeColumnName method")
+    
+    @abstractmethod
+    def getAbstentionsColumnName(self) -> str:
+        raise NotImplementedError("Subclasses must implement getAbstentionsColumnName method")

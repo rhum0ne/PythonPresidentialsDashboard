@@ -1,8 +1,8 @@
 import pandas as pd
 from interpreter import Interpreter;
 
-class SecondInterpreter(Interpreter):
-    def __init__(self, year: int, file_name: str = "data.xlsx"):
+class ThirdInterpreter(Interpreter):
+    def __init__(self, year: int, file_name: str = "data.csv"):
         self._year = year
         self._file_name = file_name
 
@@ -19,31 +19,30 @@ class SecondInterpreter(Interpreter):
             f"data/{self.year}/{tour}/{self.file_name}"
         )
 
-        df = pd.read_excel(path)
+        df = pd.read_csv(path, sep=";")
 
         # Colonnes utiles
         colonnes_utiles = [
             self.getDepartmentCodeColumnName(),
-            "Libellé du département",
-            "Code de la circonscription",
-            "Libellé de la circonscription",
+            "département",
+            "circonscription",
             "Inscrits",
             self.getAbstentionsColumnName(),
             "Votants",
-            "Blancs",
-            "Nuls",
+            self.getAbstentionsColumnName(),
+            self.getAbstentionsColumnName(),
         ]
         # Récupération des colonnes utiles
         df2024_t1_clean = df[colonnes_utiles].copy()
 
         # Normalisation des codes département
-        df2024_t1_clean["Code du département"] = (
-            df2024_t1_clean["Code du département"].astype(str).str.zfill(2)
+        df2024_t1_clean["Code département"] = (
+            df2024_t1_clean["Code département"].astype(str).str.zfill(2)
         )
 
         # Agrégation par département
         df_dep = (
-            df2024_t1_clean.groupby("Code du département", as_index=False)
+            df2024_t1_clean.groupby("Code département", as_index=False)
             .agg(
                 {
                     "Inscrits": "sum",
@@ -59,7 +58,7 @@ class SecondInterpreter(Interpreter):
         return df_dep
     
     def getDepartmentCodeColumnName(self) -> str:
-        return "Code du département"
+        return "Code département"
     
     def getAbstentionsColumnName(self) -> str:
-        return "Abstentions"
+        return "Blancs et nuls"

@@ -23,12 +23,12 @@ class FirstInterpreter(Interpreter):
 
         # Colonnes utiles
         colonnes_utiles = [
-            "Code département",
+            self.getDepartmentCodeColumnName(),
             "Libellé département",
             "Code circonscription législative",
             "Libellé circonscription législative",
             "Inscrits",
-            "Abstentions",
+            self.getAbstentionsColumnName(),
             "Votants",
             "Blancs",
             "Nuls",
@@ -60,3 +60,6 @@ class FirstInterpreter(Interpreter):
     
     def getDepartmentCodeColumnName(self) -> str:
         return "Code département"
+    
+    def getAbstentionsColumnName(self) -> str:
+        return "Abstentions"
