@@ -16,10 +16,10 @@ class ThirdInterpreter(Interpreter):
     
     def getGlobalData(self, tour: int = 1) -> pd.DataFrame:
         path = (
-            f"data/{self.year}/{tour}/{self.file_name}"
+            f"data/{self.year}/{tour}/cdsp_legi{self.year}t{tour}_circ.csv"
         )
 
-        df = pd.read_csv(path, sep=";")
+        df = pd.read_csv(path, sep=",")
 
         # Colonnes utiles
         colonnes_utiles = [
@@ -27,10 +27,8 @@ class ThirdInterpreter(Interpreter):
             "département",
             "circonscription",
             "Inscrits",
-            self.getAbstentionsColumnName(),
             "Votants",
-            self.getAbstentionsColumnName(),
-            self.getAbstentionsColumnName(),
+            self.getAbstentionsColumnName()
         ]
         # Récupération des colonnes utiles
         df2024_t1_clean = df[colonnes_utiles].copy()
@@ -47,9 +45,7 @@ class ThirdInterpreter(Interpreter):
                 {
                     "Inscrits": "sum",
                     "Votants": "sum",
-                    "Abstentions": "sum",
-                    "Blancs": "sum",
-                    "Nuls": "sum",
+                    self.getAbstentionsColumnName(): "sum",
                 }
             )
             .reset_index(drop=True)
