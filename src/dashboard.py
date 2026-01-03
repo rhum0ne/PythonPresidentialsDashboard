@@ -79,6 +79,9 @@ def launchDashboard():
         interpreter = getData(year)
         df_dep = interpreter.getGlobalData(round_value)
         
+        if(variable == "Abstentions"):
+            variable = interpreter.getAbstentionsColumnName()
+            
         fig = px.choropleth_mapbox(
             df_dep,
             geojson=departements_geojson,
