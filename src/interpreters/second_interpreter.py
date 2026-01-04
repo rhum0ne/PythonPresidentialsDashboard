@@ -1,5 +1,5 @@
 import pandas as pd
-from interpreter import Interpreter;
+from .base import Interpreter
 
 class SecondInterpreter(Interpreter):
     def __init__(self, year: int, file_name: str = "data.xlsx"):

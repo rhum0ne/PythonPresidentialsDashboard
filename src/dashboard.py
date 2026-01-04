@@ -3,7 +3,6 @@ from dash import Dash, Input, Output, html, dcc
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import requests
-from interpreter import Interpreter
 from data import getData, getAvailableYears
 from components.dashboard.franceGraph import FranceGraph
 from components.dashboard.yearSelector import YearSelector

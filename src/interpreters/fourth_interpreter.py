@@ -1,7 +1,12 @@
 import pandas as pd
-from interpreter import Interpreter;
+from .base import Interpreter
 
-class FirstInterpreter(Interpreter):
+class FourthInterpreter(Interpreter):
+    """
+    Interpréteur pour les données de 1993.
+    Les fichiers de 1993 n'ont pas de colonne "Blancs et nuls" mais ont "Votants" et "Exprimés".
+    Cet interpréteur calcule "Blancs et nuls" = "Votants" - "Exprimés"
+    """
     def __init__(self, year: int, file_name: str = "data.csv"):
         self._year = year
         self._file_name = file_name
@@ -16,41 +21,40 @@ class FirstInterpreter(Interpreter):
     
     def getGlobalData(self, tour: int = 1) -> pd.DataFrame:
         path = (
-            f"data/{self.year}/{tour}/{self.file_name}"
+            f"data/{self.year}/{tour}/cdsp_legi{self.year}t{tour}_circ.csv"
         )
 
-        df = pd.read_csv(path, sep=";")
+        df = pd.read_csv(path, sep=",")
+
+        # Calcul de la colonne "Blancs et nuls" à partir de Votants - Exprimés
+        df["Blancs et nuls"] = df["Votants"] - df["Exprimés"]
 
         # Colonnes utiles
         colonnes_utiles = [
             self.getDepartmentCodeColumnName(),
-            "Libellé département",
-            "Code circonscription législative",
-            "Libellé circonscription législative",
+            "département",
+            "circonscription",
             "Inscrits",
-            self.getAbstentionsColumnName(),
             "Votants",
-            "Blancs",
-            "Nuls",
+            self.getAbstentionsColumnName()
         ]
+        
         # Récupération des colonnes utiles
-        df2024_t1_clean = df[colonnes_utiles].copy()
+        df_clean = df[colonnes_utiles].copy()
 
         # Normalisation des codes département
-        df2024_t1_clean["Code département"] = (
-            df2024_t1_clean["Code département"].astype(str).str.zfill(2)
+        df_clean["Code département"] = (
+            df_clean["Code département"].astype(str).str.zfill(2)
         )
 
         # Agrégation par département
         df_dep = (
-            df2024_t1_clean.groupby("Code département", as_index=False)
+            df_clean.groupby("Code département", as_index=False)
             .agg(
                 {
                     "Inscrits": "sum",
                     "Votants": "sum",
-                    "Abstentions": "sum",
-                    "Blancs": "sum",
-                    "Nuls": "sum",
+                    self.getAbstentionsColumnName(): "sum",
                 }
             )
             .reset_index(drop=True)
@@ -62,4 +66,4 @@ class FirstInterpreter(Interpreter):
         return "Code département"
     
     def getAbstentionsColumnName(self) -> str:
-        return "Abstentions"
+        return "Blancs et nuls"
