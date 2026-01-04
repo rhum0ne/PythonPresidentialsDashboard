@@ -45,14 +45,40 @@ def launchDashboard():
                     ),
                     dbc.Col(
                         [
-                            html.P("Année :"),
-                            year_selector.getDropdown(),
-                            html.P("Tour :"),
-                            round_selector.getDropdown(),
-                            html.Div(id="invisible_debug_year", style={'display': 'none'}),
-                            html.Div(id="invisible_debug_round", style={'display': 'none'}),
+                            html.Div(
+                                [
+                                    dbc.Row(
+                                        [
+                                            dbc.Col(
+                                                [
+                                                    html.P("Année :", style={'margin-block': '0px', 'padding': '0px'}),
+                                                    year_selector.getDropdown(),
+                                                    html.Div(id="invisible_debug_year", style={'display': 'none'}),
+                                                ],
+                                                style={'width': '45%'}
+                                            ),
+                                            dbc.Col(
+                                                [
+                                                    html.P("Tour :", style={'margin-block': '0px', 'padding': '0px'}),
+                                                    round_selector.getDropdown(),
+                                                    html.Div(id="invisible_debug_round", style={'display': 'none'}),
+                                                ],
+                                                style={'width': '45%'}
+                                            )
+                                        ],
+                                        style={'display': 'flex', 'justifyContent': 'space-between'}
+                                    )
+                                ],
+                                style={'width': 'auto', 'height': '20%', 'border': '1px solid red'}
+                            ),
+                            html.Div(
+                                [
+                                    
+                                ],
+                                style={'width': 'auto', 'height': '80%', 'border': '1px solid blue'}
+                            )
                         ],
-                        style=year_selector.getStyle()
+                        style={'width': '45%', 'height': '50vh', 'border': '1px solid black', 'padding': '5px', 'display': 'flex', 'flexDirection': 'column', 'gap': '5px'}
                     )
                 ],
                 style={'display': 'flex', 'justifyContent': 'space-around'}
