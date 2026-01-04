@@ -104,7 +104,7 @@ def launchDashboard():
         from dash import callback_context
         
         if not callback_context.triggered:
-            return error_page("Aucun onglet sélectionné.")
+            return home_content # Par défaut on affiche home
         
         print(callback_context.triggered)
         
