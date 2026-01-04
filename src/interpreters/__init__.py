@@ -16,11 +16,13 @@ from .first_interpreter import FirstInterpreter
 from .second_interpreter import SecondInterpreter
 from .third_interpreter import ThirdInterpreter
 from .fourth_interpreter import FourthInterpreter
+from .fifth_interpreter import FifthInterpreter
 
 __all__ = [
     'Interpreter',
     'FirstInterpreter',
     'SecondInterpreter',
     'ThirdInterpreter',
-    'FourthInterpreter'
+    'FourthInterpreter',
+    'FifthInterpreter'
 ]
