@@ -1,27 +1,40 @@
 import pandas as pd
-from interpreter import Interpreter;
+from .base import Interpreter
 
 class FirstInterpreter(Interpreter):
-    def getFirst(self):
-        df2024_t1 = pd.read_csv(
-            "data/2024/1/resultats-definitifs-par-circonscriptions-legislatives.csv",
-            sep=";",
+    def __init__(self, year: int, file_name: str = "data.csv"):
+        self._year = year
+        self._file_name = file_name
+
+    @property
+    def year(self) -> int:
+        return self._year
+
+    @property
+    def file_name(self) -> str:
+        return self._file_name
+    
+    def getGlobalData(self, tour: int = 1) -> pd.DataFrame:
+        path = (
+            f"data/{self.year}/{tour}/{self.file_name}"
         )
+
+        df = pd.read_csv(path, sep=";")
 
         # Colonnes utiles
         colonnes_utiles = [
-            "Code département",
+            self.getDepartmentCodeColumnName(),
             "Libellé département",
             "Code circonscription législative",
             "Libellé circonscription législative",
             "Inscrits",
-            "Abstentions",
+            self.getAbstentionsColumnName(),
             "Votants",
             "Blancs",
             "Nuls",
         ]
         # Récupération des colonnes utiles
-        df2024_t1_clean = df2024_t1[colonnes_utiles].copy()
+        df2024_t1_clean = df[colonnes_utiles].copy()
 
         # Normalisation des codes département
         df2024_t1_clean["Code département"] = (
@@ -44,3 +57,9 @@ class FirstInterpreter(Interpreter):
         )
     
         return df_dep
+    
+    def getDepartmentCodeColumnName(self) -> str:
+        return "Code département"
+    
+    def getAbstentionsColumnName(self) -> str:
+        return "Abstentions"

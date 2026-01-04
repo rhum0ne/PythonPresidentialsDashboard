@@ -1,16 +1,20 @@
 import pandas as pd
-import dash
 from dash import Dash, Input, Output, html, dcc
+import dash_bootstrap_components as dbc
 import plotly.express as px
 import requests
-from firstInterpreter import FirstInterpreter
+from data import getData, getAvailableYears
+from components.dashboard.franceGraph import FranceGraph
+from components.dashboard.yearSelector import YearSelector
+from components.dashboard.roundSelector import RoundSelector
 
 def launchDashboard():
     print("Lancement du dashboard...")
-    interpreter = FirstInterpreter()
-    df_dep = interpreter.getFirst() 
 
-    print(df_dep)
+    france_graph = FranceGraph()
+    available_years = getAvailableYears()
+    year_selector = YearSelector(available_years=available_years)
+    round_selector = RoundSelector()
 
     # -------------------------------------------------------------------
     # 2. Charger le geojson des départements
@@ -24,24 +28,34 @@ def launchDashboard():
     # -------------------------------------------------------------------
     # 3. App Dash
     # -------------------------------------------------------------------
-    app = dash.Dash(__name__)
+    app = Dash(__name__)
 
     app.layout = html.Div(
         [
             html.H1("Votes élections législatives - Carte de France"),
-            dcc.Dropdown(
-                id="variable",
-                options=[
-                    {"label": "Inscrits", "value": "Inscrits"},
-                    {"label": "Votants", "value": "Votants"},
-                    {"label": "Abstentions", "value": "Abstentions"},
-                    {"label": "Blancs", "value": "Blancs"},
-                    {"label": "Nuls", "value": "Nuls"},
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            france_graph.getDropdown(),
+                            france_graph.getGraph()
+                        ], 
+                        style=france_graph.getStyle()
+                    ),
+                    dbc.Col(
+                        [
+                            html.P("Année :"),
+                            year_selector.getDropdown(),
+                            html.P("Tour :"),
+                            round_selector.getDropdown(),
+                            html.Div(id="invisible_debug_year", style={'display': 'none'}),
+                            html.Div(id="invisible_debug_round", style={'display': 'none'}),
+                        ],
+                        style=year_selector.getStyle()
+                    )
                 ],
-                value="Votants",
-                clearable=False,
+                style={'display': 'flex', 'justifyContent': 'space-around'}
             ),
-            dcc.Graph(id="carte_france"),
         ]
     )
 
@@ -50,13 +64,27 @@ def launchDashboard():
     # -------------------------------------------------------------------
     @app.callback(
         Output("carte_france", "figure"),
-        Input("variable", "value"),
+        [Input("variable", "value"),
+         Input("year", "value"),
+         Input("round", "value")]
     )
-    def update_map(variable):
+    def update_map(variable, year, round_value):
+        print("update_map called")
+        print("variable changed : ", variable)
+        print("year : ", year)
+        print("round : ", round_value)
+        
+        # Récupérer les données pour l'année et le tour sélectionnés
+        interpreter = getData(year)
+        df_dep = interpreter.getGlobalData(round_value)
+        
+        if(variable == "Abstentions"):
+            variable = interpreter.getAbstentionsColumnName()
+            
         fig = px.choropleth_mapbox(
             df_dep,
             geojson=departements_geojson,
-            locations="Code département",
+            locations=interpreter.getDepartmentCodeColumnName(),
             featureidkey="properties.code",
             color=variable,
             mapbox_style="carto-positron",
@@ -67,5 +95,23 @@ def launchDashboard():
         )
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
         return fig
+
+    @app.callback(
+        Output("invisible_debug_year", "children"),
+        Input("year", "value"),
+    )
+    def update_year(variable):
+        year_selector.selectYear(variable)
+        print("year changed : ", year_selector.getSelectedYear())
+        return ""
+
+    @app.callback(
+        Output("invisible_debug_round", "children"),
+        Input("round", "value"),
+    )
+    def update_round(variable):
+        round_selector.selectRound(variable)
+        print("round changed : ", round_selector.getSelectedRound())
+        return ""
 
     return app
