@@ -7,6 +7,7 @@ from data import getData, getAvailableYears
 from components.dashboard.franceGraph import FranceGraph
 from components.dashboard.yearSelector import YearSelector
 from components.dashboard.roundSelector import RoundSelector
+from components.dashboard.tabsNavigator import TabsNavigator
 
 def launchDashboard():
     print("Lancement du dashboard...")
@@ -15,6 +16,7 @@ def launchDashboard():
     available_years = getAvailableYears()
     year_selector = YearSelector(available_years=available_years)
     round_selector = RoundSelector()
+    tabs_navigator = TabsNavigator()
 
     # -------------------------------------------------------------------
     # 2. Charger le geojson des départements
@@ -28,10 +30,24 @@ def launchDashboard():
     # -------------------------------------------------------------------
     # 3. App Dash
     # -------------------------------------------------------------------
-    app = Dash(__name__)
+    app = Dash(
+        __name__,
+        external_stylesheets=[
+            'https://use.fontawesome.com/releases/v6.0.0/css/all.css'
+        ],
+        suppress_callback_exceptions=True
+    )
 
     app.layout = html.Div(
         [
+            tabs_navigator.get_tabs_component(),
+            tabs_navigator.get_content_container()
+        ]
+    )
+
+    home_content = html.Div(
+        [
+            tabs_navigator.get_tab_description(0),
             html.H1("Votes élections législatives - Carte de France"),
             dbc.Row(
                 [
@@ -59,9 +75,59 @@ def launchDashboard():
         ]
     )
 
+    election_content = html.Div([
+        tabs_navigator.get_tab_description(1),
+    ])
+
+    compare_content = html.Div([
+        tabs_navigator.get_tab_description(2),
+    ])
+
+    by_time_content = html.Div([
+        tabs_navigator.get_tab_description(3),
+    ])
+
+    by_politics_content = html.Div([
+        tabs_navigator.get_tab_description(4),
+    ])
+
     # -------------------------------------------------------------------
     # 4. Callback de mise à jour
     # -------------------------------------------------------------------
+    
+    # Callback pour changer d'onglet
+    @app.callback(
+        Output("tab-content", "children"),
+        tabs_navigator.get_tab_inputs()
+    )
+    def update_tab_content(*clicks):
+        from dash import callback_context
+        
+        if not callback_context.triggered:
+            return error_page("Aucun onglet sélectionné.")
+        
+        print(callback_context.triggered)
+        
+        button_id = callback_context.triggered[0]["prop_id"].split(".")[0]
+        
+        try:
+            tab_index = int(button_id.split("-")[1])
+        except (IndexError, ValueError):
+            return error_page("Onglet invalide.")
+        
+        contents = [
+            home_content,       # 0
+            election_content,   # 1
+            compare_content,    # 2
+            by_time_content,    # 3
+            by_politics_content # 4
+        ]
+        
+        if (0 <= tab_index < len(contents)):
+            return contents[tab_index]
+        
+        return error_page("Onglet non trouvé.")
+    
     @app.callback(
         Output("carte_france", "figure"),
         [Input("variable", "value"),
@@ -115,3 +181,13 @@ def launchDashboard():
         return ""
 
     return app
+
+
+def error_page(message: str) -> html.Div:
+    return html.Div(
+        [
+            html.H1("Erreur"),
+            html.P(message)
+        ],
+        style={'textAlign': 'center', 'marginTop': '50px'}
+    )
