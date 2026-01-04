@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import html, dcc, Input
+from dash import html, dcc, Input, Output
 
 class TabsNavigator:
     
@@ -97,6 +97,26 @@ class TabsNavigator:
     def select_tab(self, tab_index):
         if 0 <= tab_index < self.nb_tabs:
             self.selected_tab = tab_index
+
+        print(f"Selected tab: {self.selected_tab}")
     
     def get_tab_inputs(self):
         return [Input(f"tab-{i}", "n_clicks") for i in range(self.nb_tabs)]
+    
+    def get_tab_style_outputs(self):
+        return [Output(f"tab-{i}", "style") for i in range(self.nb_tabs)]
+    
+    def get_tab_style(self, tab_index, is_selected):
+        return {
+            "padding": "15px",
+            "textAlign": "center",
+            "cursor": "pointer",
+            "borderRadius": "8px",
+            "marginBottom": "10px",
+            "transition": "all 0.3s",
+            "backgroundColor": "#007bff" if is_selected else "#f8f9fa",
+            "color": "#fff" if is_selected else "#000",
+        }
+    
+    def get_all_tab_styles(self, selected_index):
+        return [self.get_tab_style(i, i == selected_index) for i in range(self.nb_tabs)]

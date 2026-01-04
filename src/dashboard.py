@@ -95,16 +95,16 @@ def launchDashboard():
     # 4. Callback de mise à jour
     # -------------------------------------------------------------------
     
-    # Callback pour changer d'onglet
+    # Changmeent d'onglet
     @app.callback(
-        Output("tab-content", "children"),
+        [Output("tab-content", "children")] + tabs_navigator.get_tab_style_outputs(),
         tabs_navigator.get_tab_inputs()
     )
     def update_tab_content(*clicks):
         from dash import callback_context
         
         if not callback_context.triggered:
-            return home_content # Par défaut on affiche home
+            return [home_content] + tabs_navigator.get_all_tab_styles(0) # Par défaut on affiche home
         
         print(callback_context.triggered)
         
@@ -113,7 +113,7 @@ def launchDashboard():
         try:
             tab_index = int(button_id.split("-")[1])
         except (IndexError, ValueError):
-            return error_page("Onglet invalide.")
+            return [error_page("Onglet invalide.")] + tabs_navigator.get_all_tab_styles(0)
         
         contents = [
             home_content,       # 0
@@ -124,9 +124,10 @@ def launchDashboard():
         ]
         
         if (0 <= tab_index < len(contents)):
-            return contents[tab_index]
+            tabs_navigator.select_tab(tab_index)
+            return [contents[tab_index]] + tabs_navigator.get_all_tab_styles(tab_index)
         
-        return error_page("Onglet non trouvé.")
+        return [error_page("Onglet non trouvé.")] + tabs_navigator.get_all_tab_styles(0)
     
     @app.callback(
         Output("carte_france", "figure"),
