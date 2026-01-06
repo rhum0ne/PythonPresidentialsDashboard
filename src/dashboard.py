@@ -70,12 +70,38 @@ def launchDashboard():
                                 ],
                                 style={'width': 'auto', 'height': '20%', 'border': '1px solid red'}
                             ),
-                            html.Div(
-                                [
-                                    
-                                ],
-                                style={'width': 'auto', 'height': '80%', 'border': '1px solid blue'}
-                            )
+                            # html.Div(
+                            #     id="kpi-container",
+                            #     style={
+                            #         'display': 'grid',
+                            #         'gridTemplateColumns': 'repeat(2, 1fr)',
+                            #         'gridTemplateRows': 'repeat(2, 1fr)',
+                            #         'border': '1px solid blue',
+                            #         'height': '80%',
+                            #     },
+                            #     children=[
+
+                            #         html.Div([
+                            #             html.H4("Inscrits"),
+                            #             html.H2(id="kpi-inscrits")
+                            #         ], style={"textAlign": "center"}),
+
+                            #         html.Div([
+                            #             html.H4("Votants"),
+                            #             html.H2(id="kpi-votants")
+                            #         ], style={"textAlign": "center"}),
+
+                            #         html.Div([
+                            #             html.H4("Blancs / Nuls"),
+                            #             html.H2(id="kpi-blancs-nuls")
+                            #         ], style={"textAlign": "center"}),
+
+                            #         html.Div([
+                            #             html.H4("Abstentions"),
+                            #             html.H2(id="kpi-abstention")
+                            #         ], style={"textAlign": "center"}),
+                            #     ]
+                            # )
                         ],
                         style={'width': '45%', 'height': '50vh', 'border': '1px solid black', 'padding': '5px', 'display': 'flex', 'flexDirection': 'column', 'gap': '5px'}
                     )
@@ -88,6 +114,8 @@ def launchDashboard():
     # -------------------------------------------------------------------
     # 4. Callback de mise à jour
     # -------------------------------------------------------------------
+    
+    #callback pour la mise à jour de la carte
     @app.callback(
         Output("carte_france", "figure"),
         [Input("variable", "value"),
@@ -121,6 +149,32 @@ def launchDashboard():
         )
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
         return fig
+    
+    #callback pour la mise à jour des KPI
+    # @app.callback(
+    # Output("kpi-inscrits", "children"),
+    # Output("kpi-votants", "children"),
+    # Output("kpi-blancs-nuls", "children"),
+    # Output("kpi-abstention", "children"),
+    # Input("year", "value"),
+    # Input("round", "value")
+    # )
+    # def update_kpis(year, round):
+        interpreter = getData(year)
+        df_dep = interpreter.getGlobalData(round)
+
+        inscrits = df_dep["Inscrits"].sum()
+        votants = df_dep["Votants"].sum()
+        blancs_nuls = df_dep["Blancs"].sum() + df_dep["Nuls"].sum()
+        abstention = df_dep[interpreter.getAbstentionsColumnName()].sum()
+
+        return (
+            f"{inscrits:,}".replace(",", " "),
+            f"{votants:,}".replace(",", " "),
+            f"{blancs_nuls:,}".replace(",", " "),
+            f"{abstention:,}".replace(",", " ")
+        )
+
 
     @app.callback(
         Output("invisible_debug_year", "children"),
