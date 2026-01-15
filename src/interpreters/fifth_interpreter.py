@@ -63,3 +63,17 @@ class FifthInterpreter(Interpreter):
     
     def getAbstentionsColumnName(self) -> str:
         return "Blancs et nuls"
+
+    def get4MainData(self, tour: int) -> dict[str, int]:
+        df = self.getGlobalData(tour)
+        inscrits = df["Inscrits"].sum()
+        votants = df["Votants"].sum()
+        blancs_nuls = df[self.getAbstentionsColumnName()].sum()
+        abstention = inscrits - votants - blancs_nuls
+
+        return {
+            "inscrits": inscrits,
+            "votants": votants,
+            "blancs_nuls": blancs_nuls,
+            "abstention": abstention
+        }

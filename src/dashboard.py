@@ -3,8 +3,10 @@ from dash import Dash, Input, Output, html, dcc
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import requests
+from utils.style import *
 from data import getData, getAvailableYears
 from components.dashboard.franceGraph import FranceGraph
+from components.dashboard.mainDataPanel import MainDataPanel
 from components.dashboard.yearSelector import YearSelector
 from components.dashboard.roundSelector import RoundSelector
 
@@ -12,6 +14,7 @@ def launchDashboard():
     print("Lancement du dashboard...")
 
     france_graph = FranceGraph()
+    main_data_panel = MainDataPanel()
     available_years = getAvailableYears()
     year_selector = YearSelector(available_years=available_years)
     round_selector = RoundSelector()
@@ -54,7 +57,7 @@ def launchDashboard():
                                                     year_selector.getDropdown(),
                                                     html.Div(id="invisible_debug_year", style={'display': 'none'}),
                                                 ],
-                                                style={'width': '45%'}
+                                                style={'width': '45%', 'display': 'flex', 'flex-direction': 'column', 'gap': '5px'}
                                             ),
                                             dbc.Col(
                                                 [
@@ -62,48 +65,17 @@ def launchDashboard():
                                                     round_selector.getDropdown(),
                                                     html.Div(id="invisible_debug_round", style={'display': 'none'}),
                                                 ],
-                                                style={'width': '45%'}
+                                                style={'width': '45%', 'display': 'flex', 'flex-direction': 'column', 'gap': '5px'}
                                             )
                                         ],
                                         style={'display': 'flex', 'justifyContent': 'space-between'}
                                     )
                                 ],
-                                style={'width': 'auto', 'height': '20%', 'border': '1px solid red'}
+                                style={'width': 'auto', 'height': '20%'}
                             ),
-                            # html.Div(
-                            #     id="kpi-container",
-                            #     style={
-                            #         'display': 'grid',
-                            #         'gridTemplateColumns': 'repeat(2, 1fr)',
-                            #         'gridTemplateRows': 'repeat(2, 1fr)',
-                            #         'border': '1px solid blue',
-                            #         'height': '80%',
-                            #     },
-                            #     children=[
-
-                            #         html.Div([
-                            #             html.H4("Inscrits"),
-                            #             html.H2(id="kpi-inscrits")
-                            #         ], style={"textAlign": "center"}),
-
-                            #         html.Div([
-                            #             html.H4("Votants"),
-                            #             html.H2(id="kpi-votants")
-                            #         ], style={"textAlign": "center"}),
-
-                            #         html.Div([
-                            #             html.H4("Blancs / Nuls"),
-                            #             html.H2(id="kpi-blancs-nuls")
-                            #         ], style={"textAlign": "center"}),
-
-                            #         html.Div([
-                            #             html.H4("Abstentions"),
-                            #             html.H2(id="kpi-abstention")
-                            #         ], style={"textAlign": "center"}),
-                            #     ]
-                            # )
+                            main_data_panel.getPanel()
                         ],
-                        style={'width': '45%', 'height': '50vh', 'border': '1px solid black', 'padding': '5px', 'display': 'flex', 'flexDirection': 'column', 'gap': '5px'}
+                        style={'width': '45%', 'height': '50vh', 'border': f'1px solid {PRIMARY_DARK}', 'border-radius': '10px', 'padding': '15px', 'display': 'flex', 'flexDirection': 'column', 'gap': '5px'}
                     )
                 ],
                 style={'display': 'flex', 'justifyContent': 'space-around'}
@@ -150,23 +122,27 @@ def launchDashboard():
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
         return fig
     
-    #callback pour la mise à jour des KPI
-    # @app.callback(
-    # Output("kpi-inscrits", "children"),
-    # Output("kpi-votants", "children"),
-    # Output("kpi-blancs-nuls", "children"),
-    # Output("kpi-abstention", "children"),
-    # Input("year", "value"),
-    # Input("round", "value")
-    # )
-    # def update_kpis(year, round):
+    # callback pour la mise à jour des KPI
+    @app.callback(
+    Output("kpi-inscrits", "children"),
+    Output("kpi-votants", "children"),
+    Output("kpi-blancs-nuls", "children"),
+    Output("kpi-abstention", "children"),
+    Input("year", "value"),
+    Input("round", "value")
+    )
+    def update_kpis(year, round):
+        print("kpi year : ", year)
+        print("kpi round : ", round)
         interpreter = getData(year)
-        df_dep = interpreter.getGlobalData(round)
+        # main_data_panel.setInterpreter(interpreter) # Mettre à jour l'interprète dans le panneau des données principales
 
-        inscrits = df_dep["Inscrits"].sum()
-        votants = df_dep["Votants"].sum()
-        blancs_nuls = df_dep["Blancs"].sum() + df_dep["Nuls"].sum()
-        abstention = df_dep[interpreter.getAbstentionsColumnName()].sum()
+        data = interpreter.get4MainData(round)
+
+        inscrits = data["inscrits"]
+        votants = data["votants"]
+        blancs_nuls = data["blancs_nuls"]
+        abstention = data["abstention"]
 
         return (
             f"{inscrits:,}".replace(",", " "),

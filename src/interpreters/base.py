@@ -23,3 +23,15 @@ class Interpreter(ABC):
     @abstractmethod
     def getAbstentionsColumnName(self) -> str:
         raise NotImplementedError("Subclasses must implement getAbstentionsColumnName method")
+    
+    @abstractmethod
+    def get4MainData(self, tour: int) -> dict[str, int]:
+        """Get the 4 main data points for the rigt panel: inscrits, votants, blancs_nuls, abstention.
+
+        Raises:
+            NotImplementedError: If the subclass does not implement this method.
+
+        Returns:
+            dict[str, int]: key(inscrits, votants, blancs_nuls, abstention) and their values
+        """
+        raise NotImplementedError("Subclasses must implement get4MainData method")

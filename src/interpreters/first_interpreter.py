@@ -18,7 +18,7 @@ class FirstInterpreter(Interpreter):
         path = (
             f"data/{self.year}/{tour}/{self.file_name}"
         )
-
+ 
         df = pd.read_csv(path, sep=";")
 
         # Colonnes utiles
@@ -63,3 +63,17 @@ class FirstInterpreter(Interpreter):
     
     def getAbstentionsColumnName(self) -> str:
         return "Abstentions"
+    
+    def get4MainData(self, tour: int) -> dict[str, int]:
+        df = self.getGlobalData(tour)
+        inscrits = df["Inscrits"].sum()
+        votants = df["Votants"].sum()
+        blancs_nuls = df["Blancs"].sum() + df["Nuls"].sum()
+        abstention = df[self.getAbstentionsColumnName()].sum()
+        
+        return {
+            "inscrits": inscrits,
+            "votants": votants,
+            "blancs_nuls": blancs_nuls,
+            "abstention": abstention
+        }
