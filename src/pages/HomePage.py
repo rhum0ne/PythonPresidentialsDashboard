@@ -5,19 +5,87 @@ from components.dashboard.roundSelector import RoundSelector
 from components.dashboard.mainDataPanel import MainDataPanel
 from components.dashboard.franceGraph import FranceGraph
 from components.dashboard.tabsNavigator import TabsNavigator
+import plotly.express as px
+from data import *
 from utils.style import *
 
 class HomePage:
-    def __init__(self, app: Dash, available_years: list, tabs_navigator: TabsNavigator):
+    def __init__(self, app: Dash, available_years: list, departements_geojson: dict, tabs_navigator: TabsNavigator):
         self.app = app
         self.tabs_navigator = tabs_navigator
         self.available_years = available_years
+        self.departements_geojson = departements_geojson
         
         self.france_graph = FranceGraph()
         self.main_data_panel = MainDataPanel();
         
         self.year_selector = YearSelector(available_years=available_years)
         self.round_selector = RoundSelector()
+        
+        @app.callback(
+        Output("carte_france", "figure"),
+        [Input("variable", "value"),
+         Input("year", "value"),
+         Input("round", "value")]
+        )
+        def update_map(variable, year, round_value):
+            print("update_map called")
+            print("variable changed : ", variable)
+            print("year : ", year)
+            print("round : ", round_value)
+            
+            # Récupérer les données pour l'année et le tour sélectionnés
+            interpreter = getData(year)
+            df_dep = interpreter.getGlobalData(round_value)
+            
+            
+            
+            if(variable == "Abstentions"):
+                variable = interpreter.getAbstentionsColumnName()
+                
+            fig = px.choropleth_mapbox(
+                df_dep,
+                geojson=self.departements_geojson,
+                locations=interpreter.getDepartmentCodeColumnName(),
+                featureidkey="properties.code",
+                color=variable,
+                mapbox_style="carto-positron",
+                zoom=5,
+                center={"lat": 46.5, "lon": 2.5},
+                opacity=0.7,
+                color_continuous_scale="Viridis",
+            )
+            fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+            return fig
+        
+        # callback pour la mise à jour des KPI
+        @app.callback(
+        Output("kpi-inscrits", "children"),
+        Output("kpi-votants", "children"),
+        Output("kpi-blancs-nuls", "children"),
+        Output("kpi-abstention", "children"),
+        Input("year", "value"),
+        Input("round", "value")
+        )
+        def update_kpis(year, round):
+            print("kpi year : ", year)
+            print("kpi round : ", round)
+            interpreter = getData(year)
+            # main_data_panel.setInterpreter(interpreter) # Mettre à jour l'interprète dans le panneau des données principales
+
+            data = interpreter.get4MainData(round)
+
+            inscrits = data["inscrits"]
+            votants = data["votants"]
+            blancs_nuls = data["blancs_nuls"]
+            abstention = data["abstention"]
+
+            return (
+                f"{inscrits:,}".replace(",", " "),
+                f"{votants:,}".replace(",", " "),
+                f"{blancs_nuls:,}".replace(",", " "),
+                f"{abstention:,}".replace(",", " ")
+            )
         
         @app.callback(
         Output("invisible_debug_year", "children"),
