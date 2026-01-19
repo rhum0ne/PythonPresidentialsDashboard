@@ -10,15 +10,12 @@ from components.dashboard.mainDataPanel import MainDataPanel
 from components.dashboard.yearSelector import YearSelector
 from components.dashboard.roundSelector import RoundSelector
 from components.dashboard.tabsNavigator import TabsNavigator
+from pages.HomePage import HomePage
 
 def launchDashboard():
     print("Lancement du dashboard...")
 
-    france_graph = FranceGraph()
-    main_data_panel = MainDataPanel()
     available_years = getAvailableYears()
-    year_selector = YearSelector(available_years=available_years)
-    round_selector = RoundSelector()
     tabs_navigator = TabsNavigator()
 
     # -------------------------------------------------------------------
@@ -40,6 +37,10 @@ def launchDashboard():
         ],
         suppress_callback_exceptions=True
     )
+    
+    # PAGES
+    
+    homePage = HomePage(app=app, available_years=available_years, tabs_navigator=tabs_navigator)
 
     app.layout = html.Div(
         [
@@ -48,56 +49,7 @@ def launchDashboard():
         ]
     )
 
-    home_content = html.Div(
-        [
-            tabs_navigator.get_tab_description(0),
-            html.H1("Votes élections législatives - Carte de France"),
-            dbc.Row(
-                [
-                    dbc.Col(
-                        [
-                            france_graph.getDropdown(),
-                            france_graph.getGraph()
-                        ], 
-                        style=france_graph.getStyle()
-                    ),
-                    dbc.Col(
-                        [
-                            html.Div(
-                                [
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
-                                                [
-                                                    html.P("Année :", style={'margin-block': '0px', 'padding': '0px'}),
-                                                    year_selector.getDropdown(),
-                                                    html.Div(id="invisible_debug_year", style={'display': 'none'}),
-                                                ],
-                                                style={'width': '45%', 'display': 'flex', 'flex-direction': 'column', 'gap': '5px'}
-                                            ),
-                                            dbc.Col(
-                                                [
-                                                    html.P("Tour :", style={'margin-block': '0px', 'padding': '0px'}),
-                                                    round_selector.getDropdown(),
-                                                    html.Div(id="invisible_debug_round", style={'display': 'none'}),
-                                                ],
-                                                style={'width': '45%', 'display': 'flex', 'flex-direction': 'column', 'gap': '5px'}
-                                            )
-                                        ],
-                                        style={'display': 'flex', 'justifyContent': 'space-between'}
-                                    )
-                                ],
-                                style={'width': 'auto', 'height': '20%'}
-                            ),
-                            main_data_panel.getPanel()
-                        ],
-                        style={'width': '45%', 'height': '50vh', 'border': f'1px solid {PRIMARY_DARK}', 'border-radius': '10px', 'padding': '15px', 'display': 'flex', 'flexDirection': 'column', 'gap': '5px'}
-                    )
-                ],
-                style={'display': 'flex', 'justifyContent': 'space-around'}
-            ),
-        ]
-    )
+    home_content = homePage.get_content()
 
     election_content = html.Div([
         tabs_navigator.get_tab_description(1),
@@ -130,7 +82,7 @@ def launchDashboard():
         if not callback_context.triggered:
             return [home_content] + tabs_navigator.get_all_tab_styles(0) # Par défaut on affiche home
         
-        print(callback_context.triggered)
+        print("context : " + str(callback_context.triggered))
         
         button_id = callback_context.triggered[0]["prop_id"].split(".")[0]
         
@@ -216,24 +168,6 @@ def launchDashboard():
             f"{abstention:,}".replace(",", " ")
         )
 
-
-    @app.callback(
-        Output("invisible_debug_year", "children"),
-        Input("year", "value"),
-    )
-    def update_year(variable):
-        year_selector.selectYear(variable)
-        print("year changed : ", year_selector.getSelectedYear())
-        return ""
-
-    @app.callback(
-        Output("invisible_debug_round", "children"),
-        Input("round", "value"),
-    )
-    def update_round(variable):
-        round_selector.selectRound(variable)
-        print("round changed : ", round_selector.getSelectedRound())
-        return ""
 
     return app
 
