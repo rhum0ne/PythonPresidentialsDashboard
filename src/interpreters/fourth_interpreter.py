@@ -76,8 +76,8 @@ class FourthInterpreter(Interpreter):
         abstention = inscrits - votants - blancs_nuls
 
         return {
-            "inscrits": inscrits,
-            "votants": votants,
-            "blancs_nuls": blancs_nuls,
-            "abstention": abstention
+            "inscrits": int(inscrits),
+            "votants": int(votants),
+            "blancs_nuls": int(blancs_nuls),
+            "abstention": int(abstention)
         }
