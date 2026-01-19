@@ -13,16 +13,16 @@ class YearSelector:
         # else:
         #     raise ValueError(f"Year {year} is not available.")
 
-    def getSelectedYear(self):
+    def getSelectedYear(self) -> int:
         return self.selected_year
 
-    def getAvailableYears(self):
+    def getAvailableYears(self) -> list:
         return self.available_years
-    
-    def getStyle(self):
+
+    def getStyle(self) -> dict:
         return self.style
-    
-    def getDropdown(self):
+
+    def getDropdown(self) -> dcc.Dropdown:
         return dcc.Dropdown(
             id="year",
             options=[

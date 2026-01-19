@@ -2,7 +2,7 @@ from dash import dcc
 
 class FranceGraph:
     def __init__(self):
-        self.style = {'width': "45%", 'height': '50%'}
+        self.style = {'width': "45%", 'height': '50vh'}
 
     def getStyle(self):
         return self.style

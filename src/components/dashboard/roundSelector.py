@@ -13,13 +13,13 @@ class RoundSelector:
         # else:
         #     raise ValueError(f"Year {year} is not available.")
 
-    def getSelectedRound(self):
+    def getSelectedRound(self) -> int:
         return self.selected_round
 
-    def getStyle(self):
+    def getStyle(self) -> dict:
         return self.style
     
-    def getDropdown(self):
+    def getDropdown(self) -> dcc.Dropdown:
         return dcc.Dropdown(
             id="round",
             options=[
