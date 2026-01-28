@@ -10,7 +10,7 @@ import plotly.express as px
 from data import *
 from utils.style import *
 
-class HomePage:
+class ElectionPage:
     def __init__(self, app: Dash, available_years: list, departements_geojson: dict, tabs_navigator: TabsNavigator):
         self.app = app
         self.tabs_navigator = tabs_navigator
@@ -28,12 +28,12 @@ class HomePage:
         self.selected_round = None
         self.selected_variable = None
         
-        # @app.callback(
-        # Output("carte_france", "figure"),
-        # [Input("variable", "value"),
-        #  Input("year", "value"),
-        #  Input("round", "value")]
-        # )
+        @app.callback(
+        Output("carte_france", "figure"),
+        [Input("variable", "value"),
+         Input("year", "value"),
+         Input("round", "value")]
+        )
         def update_map(variable, year, round_value):
             print("update_map called")
             print("variable changed : ", variable)
@@ -65,29 +65,29 @@ class HomePage:
             return fig
         
         # callback pour la mise à jour de l'histogramme
-        # @app.callback(
-        # Output("histogram", "figure"),
-        # [Input("variable", "value"),
-        #  Input("year", "value"),
-        #  Input("round", "value")]
-        # )
-        # def update_histogram(variable, year, round_value):
-        #     print("update histogram")
-        #     interpreter = getData(year)
-        #     columns = [
-        #         interpreter.getDepartmentCodeColumnName(),
-        #         variable
-        #     ]
-        #     df_dep = interpreter.getGlobalData(round_value)[columns]
+        @app.callback(
+        Output("histogram", "figure"),
+        [Input("variable", "value"),
+         Input("year", "value"),
+         Input("round", "value")]
+        )
+        def update_histogram(variable, year, round_value):
+            print("update histogram")
+            interpreter = getData(year)
+            columns = [
+                interpreter.getDepartmentCodeColumnName(),
+                variable
+            ]
+            df_dep = interpreter.getGlobalData(round_value)[columns]
             
-        #     if(variable == "Abstentions"):
-        #         variable = interpreter.getAbstentionsColumnName()
+            if(variable == "Abstentions"):
+                variable = interpreter.getAbstentionsColumnName()
             
-        #     self.selected_year = year
-        #     self.selected_round = round_value
-        #     self.selected_variable = variable
-        #     fig = px.histogram(x=df_dep[interpreter.getDepartmentCodeColumnName()], y=df_dep[variable], labels={'x': 'Départements', 'y': ""+variable}, title=f'Histogramme des {variable} en {year} au tour {round_value}')
-        #     return fig
+            self.selected_year = year
+            self.selected_round = round_value
+            self.selected_variable = variable
+            fig = px.histogram(x=df_dep[interpreter.getDepartmentCodeColumnName()], y=df_dep[variable], labels={'x': 'Départements', 'y': ""+variable}, title=f'Histogramme des {variable} en {year} au tour {round_value}')
+            return fig
         
         # callback pour la mise à jour des KPI
         @app.callback(
@@ -157,7 +157,22 @@ class HomePage:
                                         [
                                             dbc.Row(
                                                 [
-                                                    html.P("Informations générales")
+                                                    dbc.Col(
+                                                        [
+                                                            html.P("Année :", style={'margin-block': '0px', 'padding': '0px'}),
+                                                            self.year_selector.getDropdown(),
+                                                            html.Div(id="invisible_debug_year", style={'display': 'none'}),
+                                                        ],
+                                                        style={'width': '45%', 'display': 'flex', 'flex-direction': 'column', 'gap': '5px'}
+                                                    ),
+                                                    dbc.Col(
+                                                        [
+                                                            html.P("Tour :", style={'margin-block': '0px', 'padding': '0px'}),
+                                                            self.round_selector.getDropdown(),
+                                                            html.Div(id="invisible_debug_round", style={'display': 'none'}),
+                                                        ],
+                                                        style={'width': '45%', 'display': 'flex', 'flex-direction': 'column', 'gap': '5px'}
+                                                    )
                                                 ],
                                                 style={'display': 'flex', 'justifyContent': 'space-between'}
                                             )
@@ -169,7 +184,7 @@ class HomePage:
                                 style={'width': '45%', 'height': '50vh', 'border': f'1px solid {PRIMARY_DARK}', 'border-radius': '10px', 'padding': '15px', 'display': 'flex', 'flexDirection': 'column', 'gap': '5px'}
                             )
                         ],
-                        style={'display': 'flex', 'justifyContent': 'space-around', 'width': '100%'}
+                        style={'display': 'flex', 'justifyContent': 'space-around'}
                     ),
                     dcc.Graph(id="histogram", )
                 ]

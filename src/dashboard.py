@@ -10,6 +10,7 @@ from components.dashboard.mainDataPanel import MainDataPanel
 from components.dashboard.yearSelector import YearSelector
 from components.dashboard.roundSelector import RoundSelector
 from components.dashboard.tabsNavigator import TabsNavigator
+from components.common.header import Header
 from pages.HomePage import HomePage
 
 def launchDashboard():
@@ -41,12 +42,32 @@ def launchDashboard():
     # PAGES
     
     homePage = HomePage(app=app,departements_geojson=departements_geojson, available_years=available_years, tabs_navigator=tabs_navigator)
+    header = Header(app, tabs_navigator, available_years)
 
-    app.layout = html.Div(
+    # app.layout = html.Div(
+    #     [
+    #         tabs_navigator.get_tabs_component(),
+    #         tabs_navigator.get_content_container(),
+    #         header.get_content()
+    #     ]
+    # )
+    app.layout = dbc.Container(
         [
-            tabs_navigator.get_tabs_component(),
-            tabs_navigator.get_content_container()
-        ]
+            dbc.Col(
+                [
+                    tabs_navigator.get_tabs_component()
+                ],
+                style={'width': 'max-content'}
+            ),
+            dbc.Col(
+                [
+                    header.get_content(),
+                    tabs_navigator.get_content_container(),
+                ],
+                style={'width': 'calc(100vw - 60px)'}
+            )
+        ],
+        style={'display': 'flex', 'width': '100%'}
     )
 
     home_content = homePage.get_content()
