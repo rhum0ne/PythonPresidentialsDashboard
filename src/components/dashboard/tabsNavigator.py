@@ -57,7 +57,7 @@ class TabsNavigator:
                 "padding": "15px 5px",
                 "backgroundColor": "#ffffff",
                 "boxShadow": "2px 0 5px rgba(0,0,0,0.1)",
-                "height": "100vh",
+                "height": "calc(100vh - 46px)",
                 # "position": "fixed",
                 "left": 0,
                 "top": 0,

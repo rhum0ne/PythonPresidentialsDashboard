@@ -12,6 +12,7 @@ from components.dashboard.roundSelector import RoundSelector
 from components.dashboard.tabsNavigator import TabsNavigator
 from components.common.header import Header
 from pages.HomePage import HomePage
+from pages.ElectionPage import ElectionPage
 
 def launchDashboard():
     print("Lancement du dashboard...")
@@ -36,13 +37,17 @@ def launchDashboard():
         external_stylesheets=[
             'https://use.fontawesome.com/releases/v6.0.0/css/all.css'
         ],
-        suppress_callback_exceptions=True
+        suppress_callback_exceptions=True,
+        # prevent_initial_callbacks='initial_duplicate'
     )
     
     # PAGES
     
     homePage = HomePage(app=app,departements_geojson=departements_geojson, available_years=available_years, tabs_navigator=tabs_navigator)
-    header = Header(app, tabs_navigator, available_years)
+    election_page = ElectionPage(app, tabs_navigator)
+    
+    pages = [homePage, election_page]
+    header = Header(app, tabs_navigator, available_years, pages)
 
     # app.layout = html.Div(
     #     [
@@ -64,17 +69,18 @@ def launchDashboard():
                     header.get_content(),
                     tabs_navigator.get_content_container(),
                 ],
-                style={'width': 'calc(100vw - 60px)'}
+                style={'width': 'calc(100vw - 60px)', 'overflow': 'auto'}
             )
         ],
         style={'display': 'flex', 'width': '100%'}
     )
 
     home_content = homePage.get_content()
+    election_content = election_page.get_content()
 
-    election_content = html.Div([
-        tabs_navigator.get_tab_description(1),
-    ])
+    # election_content = html.Div([
+    #     tabs_navigator.get_tab_description(1),
+    # ])
 
     compare_content = html.Div([
         tabs_navigator.get_tab_description(2),
