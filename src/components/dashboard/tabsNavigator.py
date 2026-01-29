@@ -57,8 +57,8 @@ class TabsNavigator:
                 "padding": "15px 5px",
                 "backgroundColor": "#ffffff",
                 "boxShadow": "2px 0 5px rgba(0,0,0,0.1)",
-                "height": "100vh",
-                "position": "fixed",
+                "height": "calc(100vh - 46px)",
+                # "position": "fixed",
                 "left": 0,
                 "top": 0,
                 "zIndex": 1000
@@ -69,7 +69,7 @@ class TabsNavigator:
         return html.Div(
             id="tab-content",
             style={
-                "marginLeft": "80px",
+                "marginLeft": "0px",
                 "padding": "20px"
             }
         )

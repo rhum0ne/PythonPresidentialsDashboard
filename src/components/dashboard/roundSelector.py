@@ -5,6 +5,7 @@ class RoundSelector:
         self.available_rounds = [1, 2]
         self.selected_round = 1
         self.style = {'width': '45%'}
+        self.id = "round"
 
     def selectRound(self, round: int):
         if round in self.available_rounds:
@@ -21,7 +22,7 @@ class RoundSelector:
     
     def getDropdown(self) -> dcc.Dropdown:
         return dcc.Dropdown(
-            id="round",
+            id=self.id,
             options=[
                 {"label": round, "value": round} for round in self.available_rounds],
             value=self.selected_round,

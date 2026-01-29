@@ -5,6 +5,7 @@ class YearSelector:
         self.available_years = sorted(available_years)
         self.selected_year = self.available_years[len(self.available_years) - 1] if self.available_years else None
         self.style = {'width': '45%'}
+        self.id = "year"
 
     def selectYear(self, year: int):
         if year in self.available_years:
@@ -24,7 +25,7 @@ class YearSelector:
 
     def getDropdown(self) -> dcc.Dropdown:
         return dcc.Dropdown(
-            id="year",
+            id=self.id,
             options=[
                 {"label": year, "value": year} for year in self.available_years],
             value=self.selected_year,
