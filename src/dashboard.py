@@ -67,7 +67,10 @@ def launchDashboard():
             dbc.Col(
                 [
                     header.get_content(),
-                    tabs_navigator.get_content_container(),
+                    html.Div(
+                        tabs_navigator.get_content_container(),
+                        style={'marginTop': '80px'}
+                    )
                 ],
                 style={'width': 'calc(100vw - 60px)', 'overflow': 'auto'}
             )

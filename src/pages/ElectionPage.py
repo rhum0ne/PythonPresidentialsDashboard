@@ -46,21 +46,64 @@ class ElectionPage:
             # remove mode bar, disable zoom on histogram
             fig = px.bar(x=df_dep[interpreter.getDepartmentCodeColumnName()], y=df_dep[variable], labels={'x': 'Départements', 'y': str(variable)}, title=f'Histogramme des {variable} en {year} au tour {round_value}')
             return fig
+        
+        @app.callback(
+            Output("pie", "figure"),
+            Input("year", "value"),
+            Input("round", "value")
+        )
+        def update_pie(year, round_value):
+            interpreter = getData(year)
+
+            data = interpreter.get4MainData(round_value)
+
+            inscrits = data["inscrits"]
+            votants = data["votants"]
+            blancs_nuls = data["blancs_nuls"]
+            abstention = data["abstention"]
+            
+            per_votants = round((votants / inscrits) * 100, 2)
+            per_blancs_nuls = round((blancs_nuls / inscrits) * 100, 2)
+            per_abstention = round((abstention / inscrits) * 100, 2)
+            
+            labels = ['Votants', 'Blancs et Nuls', 'Abstention']
+            values = [per_votants, per_blancs_nuls, per_abstention]
+            fig = px.pie(names=labels, values=values, title=f'Repartition des votants, blancs/nuls et abstention en {year} au tour {round_value}')
+            return fig
+            
 
     def get_content(self):
         election_content = html.Div(
-                [
-                    dcc.Graph(
-                        id="histogram", 
-                        config={
-                            'displayModeBar': False, 
-                            "scrollZoom": False,
-                            "doubleClick": False,
-                            "displaylogo": False
-                        }
+            [
+                dbc.Row(
+                    [
+                        dcc.Graph(
+                            id="histogram", 
+                            config={
+                                'displayModeBar': False,
+                                "scrollZoom": False,
+                            }
+                        )
+                    ]
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                dcc.Graph(
+                                    id="pie",
+                                    config={
+                                        'displayModeBar': False,
+                                        'scrollZoom': False,
+                                    }
+                                )
+                            ]
+                        ),
+                        dbc.Col()
+                    ]
                 )
-                ]
-            )
+            ]
+        )
         
         return election_content
     
