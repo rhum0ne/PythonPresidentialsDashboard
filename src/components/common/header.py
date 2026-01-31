@@ -11,9 +11,9 @@ class Header:
         self.app = app
         self.tabsNavigator = tabsNavigator
         self.available_years = available_years
-        self.year_selector = YearSelector(available_years=available_years)
-        self.round_selector = RoundSelector()
-        self.variable_selector = VariableSelector()
+        self.year_selector = YearSelector(available_years=available_years, id="year")
+        self.round_selector = RoundSelector(id="round")
+        self.variable_selector = VariableSelector(id="variable")
         self.selected_year = None
         self.selected_round = None
         self.pages = pages
@@ -57,5 +57,5 @@ class Header:
                     style={'width': '45%', 'display': 'flex', 'flex-direction': 'column', 'gap': '5px'}
                 )
             ],
-            style={'display': 'flex', 'gap': '10px', 'justifyContent': 'space-between', 'padding': '10px', 'box-shadow': '2px 4px 8px 0 rgba(0, 0, 0, 0.1)', 'position': 'fixed', 'width': '100%', 'z-index': '999', 'background-color': 'white'}
+            style={'display': 'flex', 'gap': '10px', 'justifyContent': 'space-between', 'padding': '10px', 'box-shadow': '2px 4px 8px 0 rgba(0, 0, 0, 0.1)', 'position': 'fixed', 'width': 'calc(100% - 90px)', 'z-index': '999', 'background-color': 'white'}
         )

@@ -6,6 +6,7 @@ from components.dashboard.mainDataPanel import MainDataPanel
 from components.dashboard.franceGraph import FranceGraph
 from components.dashboard.tabsNavigator import TabsNavigator
 from components.dashboard.histogram import Histogram
+from components.dashboard.pieDepartments import PieDepartments
 import plotly.express as px
 from data import *
 from utils.style import *
@@ -16,6 +17,7 @@ class ElectionPage:
         self.tabs_navigator = tabs_navigator
         
         self.histogram = Histogram()
+        self.pie_departments = PieDepartments(app)
         
         self.selected_year = None
         self.selected_round = None
@@ -95,12 +97,19 @@ class ElectionPage:
                                     config={
                                         'displayModeBar': False,
                                         'scrollZoom': False,
-                                    }
+                                    },
                                 )
-                            ]
+                            ],
+                            style={'width': '50%'}
                         ),
-                        dbc.Col()
-                    ]
+                        dbc.Col(
+                            [
+                                self.pie_departments.get_content()
+                            ],
+                            style={'width': '50%'}
+                        )
+                    ],
+                    style={'display': 'flex', 'gap': '20px', 'width': '100%'}
                 )
             ]
         )

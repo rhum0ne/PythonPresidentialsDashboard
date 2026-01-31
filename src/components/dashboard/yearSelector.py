@@ -1,11 +1,11 @@
 from dash import dcc
 
 class YearSelector:
-    def __init__(self, available_years: list):
+    def __init__(self, available_years: list, id: str):
         self.available_years = sorted(available_years)
         self.selected_year = self.available_years[len(self.available_years) - 1] if self.available_years else None
         self.style = {'width': '45%'}
-        self.id = "year"
+        self.id = id
 
     def selectYear(self, year: int):
         if year in self.available_years:

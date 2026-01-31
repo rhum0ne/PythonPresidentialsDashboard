@@ -1,9 +1,12 @@
 from dash import dcc
 
 class VariableSelector:
+    def __init__(self, id: str):
+        self.id = id
+    
     def get_dropdown(self) -> dcc.Dropdown:
         return dcc.Dropdown(
-            id="variable",
+            id=self.id,
             options=[
                 {"label": "Inscrits", "value": "Inscrits"},
                 {"label": "Votants", "value": "Votants"},
