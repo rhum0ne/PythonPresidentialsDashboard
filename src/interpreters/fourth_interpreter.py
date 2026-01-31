@@ -32,7 +32,7 @@ class FourthInterpreter(Interpreter):
         # Colonnes utiles
         colonnes_utiles = [
             self.getDepartmentCodeColumnName(),
-            "département",
+            self.getDepartmentLabelName(),
             "circonscription",
             "Inscrits",
             "Votants",
@@ -52,6 +52,7 @@ class FourthInterpreter(Interpreter):
             df_clean.groupby("Code département", as_index=False)
             .agg(
                 {
+                    self.getDepartmentLabelName(): "first",
                     "Inscrits": "sum",
                     "Votants": "sum",
                     self.getAbstentionsColumnName(): "sum",
@@ -65,8 +66,26 @@ class FourthInterpreter(Interpreter):
     def getDepartmentCodeColumnName(self) -> str:
         return "Code département"
     
+    def getDepartmentLabelName(self) -> str:
+        return "département"
+    
     def getAbstentionsColumnName(self) -> str:
         return "Blancs et nuls"
+
+    def getDepartment4MainData(self, tour: int, department_code: str) -> dict[str, int]:
+        df = self.getGlobalData(tour)
+        df = df[df[self.getDepartmentCodeColumnName()] == department_code]
+        inscrits = df["Inscrits"]
+        votants = df["Votants"]
+        blancs_nuls = df["Blancs"] + df["Nuls"]
+        abstention = df[self.getAbstentionsColumnName()]
+        
+        return {
+            "inscrits": int(inscrits),
+            "votants": int(votants),
+            "blancs_nuls": int(blancs_nuls),
+            "abstention": int(abstention)
+        }
 
     def get4MainData(self, tour: int) -> dict[str, int]:
         df = self.getGlobalData(tour)

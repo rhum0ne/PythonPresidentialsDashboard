@@ -72,7 +72,7 @@ def launchDashboard():
                         style={'marginTop': '80px'}
                     )
                 ],
-                style={'width': 'calc(100vw - 60px)', 'overflow': 'auto'}
+                style={'width': 'calc(100vw - 60px)', 'overflow': 'auto', 'marginLeft': '60px'}
             )
         ],
         style={'display': 'flex', 'width': '100%'}

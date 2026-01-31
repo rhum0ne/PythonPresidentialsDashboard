@@ -58,7 +58,7 @@ class TabsNavigator:
                 "backgroundColor": "#ffffff",
                 "boxShadow": "2px 0 5px rgba(0,0,0,0.1)",
                 "height": "calc(100vh - 46px)",
-                # "position": "fixed",
+                "position": "fixed",
                 "left": 0,
                 "top": 0,
                 "zIndex": 1000
