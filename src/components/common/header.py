@@ -11,9 +11,9 @@ class Header:
         self.app = app
         self.tabsNavigator = tabsNavigator
         self.available_years = available_years
-        self.year_selector = YearSelector(available_years=available_years)
-        self.round_selector = RoundSelector()
-        self.variable_selector = VariableSelector()
+        self.year_selector = YearSelector(available_years=available_years, id="year")
+        self.round_selector = RoundSelector(id="round")
+        self.variable_selector = VariableSelector(id="variable")
         self.selected_year = None
         self.selected_round = None
         self.pages = pages

@@ -1,11 +1,11 @@
 from dash import dcc
 
 class RoundSelector:
-    def __init__(self):
+    def __init__(self, id: str):
         self.available_rounds = [1, 2]
         self.selected_round = 1
         self.style = {'width': '45%'}
-        self.id = "round"
+        self.id = id
 
     def selectRound(self, round: int):
         if round in self.available_rounds:

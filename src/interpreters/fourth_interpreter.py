@@ -77,8 +77,8 @@ class FourthInterpreter(Interpreter):
         df = df[df[self.getDepartmentCodeColumnName()] == department_code]
         inscrits = df["Inscrits"]
         votants = df["Votants"]
-        blancs_nuls = df["Blancs"] + df["Nuls"]
-        abstention = df[self.getAbstentionsColumnName()]
+        blancs_nuls = df[self.getAbstentionsColumnName()]
+        abstention = inscrits - votants - blancs_nuls
         
         return {
             "inscrits": int(inscrits),
