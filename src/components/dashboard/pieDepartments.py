@@ -1,8 +1,8 @@
 import plotly.express as px
 from dash import Dash, dcc, html, Output, Input
-from data import getData
+from src.data import getData
 import dash_bootstrap_components as dbc
-from components.dashboard.departmentSelector import DepartmentSelector
+from src.components.dashboard.departmentSelector import DepartmentSelector
 
 class PieDepartments:
     def __init__(self, app: Dash):

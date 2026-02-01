@@ -1,15 +1,11 @@
 from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
-from components.dashboard.yearSelector import YearSelector
-from components.dashboard.roundSelector import RoundSelector
-from components.dashboard.mainDataPanel import MainDataPanel
-from components.dashboard.franceGraph import FranceGraph
-from components.dashboard.tabsNavigator import TabsNavigator
-from components.dashboard.histogram import Histogram
-from components.dashboard.pieDepartments import PieDepartments
+from src.components.dashboard.tabsNavigator import TabsNavigator
+from src.components.dashboard.histogram import Histogram
+from src.components.dashboard.pieDepartments import PieDepartments
 import plotly.express as px
-from data import *
-from utils.style import *
+from src.data import *
+from src.utils.style import *
 
 class ElectionPage:
     def __init__(self, app: Dash, tabs_navigator: TabsNavigator):
@@ -33,14 +29,19 @@ class ElectionPage:
         def update_histogram(variable, year, round_value):
             print("update histogram")
             interpreter = getData(year)
+            
+            if(variable == "Abstentions"):
+                variable = interpreter.getAbstentionsColumnName()
+            if(variable == "Blancs"):
+                variable = interpreter.getBlancsColumnName()
+            if(variable == "Nuls"):
+                variable = interpreter.getNulsColumnName()
+                
             columns = [
                 interpreter.getDepartmentCodeColumnName(),
                 variable
             ]
             df_dep = interpreter.getGlobalData(round_value)[columns]
-            
-            if(variable == "Abstentions"):
-                variable = interpreter.getAbstentionsColumnName()
             
             self.selected_year = year
             self.selected_round = round_value
@@ -77,6 +78,7 @@ class ElectionPage:
     def get_content(self):
         election_content = html.Div(
             [
+                self.tabs_navigator.get_tab_description(1),
                 dbc.Row(
                     [
                         dcc.Graph(

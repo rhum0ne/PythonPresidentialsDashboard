@@ -1,4 +1,4 @@
-from interpreters import (
+from src.interpreters import (
     Interpreter,
     FirstInterpreter,
     SecondInterpreter,

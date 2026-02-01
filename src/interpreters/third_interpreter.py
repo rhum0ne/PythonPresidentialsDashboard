@@ -63,6 +63,12 @@ class ThirdInterpreter(Interpreter):
     def getAbstentionsColumnName(self) -> str:
         return "Blancs et nuls"
     
+    def getBlancsColumnName(self) -> str:
+        return "Blancs et nuls"
+    
+    def getNulsColumnName(self) -> str:
+        return "Blancs et Nuls"
+    
     def getDepartment4MainData(self, tour: int, department_code: str) -> dict[str, int]:
         df = self.getGlobalData(tour)
         df = df[df[self.getDepartmentCodeColumnName()] == department_code]

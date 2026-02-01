@@ -1,28 +1,23 @@
 from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
-from components.dashboard.yearSelector import YearSelector
-from components.dashboard.roundSelector import RoundSelector
-from components.dashboard.mainDataPanel import MainDataPanel
-from components.dashboard.franceGraph import FranceGraph
-from components.dashboard.tabsNavigator import TabsNavigator
-from components.dashboard.histogram import Histogram
+from src.components.dashboard.yearSelector import YearSelector
+from src.components.dashboard.roundSelector import RoundSelector
+from src.components.dashboard.mainDataPanel import MainDataPanel
+from src.components.dashboard.franceGraph import FranceGraph
+from src.components.dashboard.tabsNavigator import TabsNavigator
+from src.components.dashboard.histogram import Histogram
 import plotly.express as px
-from data import *
-from utils.style import *
+from src.data import *
+from src.utils.style import *
 
 class HomePage:
     def __init__(self, app: Dash, available_years: list, departements_geojson: dict, tabs_navigator: TabsNavigator):
         self.app = app
         self.tabs_navigator = tabs_navigator
-        # self.available_years = available_years
         self.departements_geojson = departements_geojson
         
         self.france_graph = FranceGraph()
         self.main_data_panel = MainDataPanel()
-        # self.histogtam = Histogram()
-        
-        # self.year_selector = YearSelector(available_years=available_years)
-        # self.round_selector = RoundSelector()
         
         self.selected_year = None
         self.selected_round = None
@@ -46,6 +41,10 @@ class HomePage:
             
             if(variable == "Abstentions"):
                 variable = interpreter.getAbstentionsColumnName()
+            if(variable == "Blancs"):
+                variable = interpreter.getBlancsColumnName()
+            if(variable == "Nuls"):
+                variable = interpreter.getNulsColumnName()
             
             fig = px.choropleth_mapbox(
                 df_dep,

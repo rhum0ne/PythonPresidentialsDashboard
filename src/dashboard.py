@@ -3,16 +3,12 @@ from dash import Dash, Input, Output, html, dcc
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import requests
-from utils.style import *
-from data import getData, getAvailableYears
-from components.dashboard.franceGraph import FranceGraph
-from components.dashboard.mainDataPanel import MainDataPanel
-from components.dashboard.yearSelector import YearSelector
-from components.dashboard.roundSelector import RoundSelector
-from components.dashboard.tabsNavigator import TabsNavigator
-from components.common.header import Header
-from pages.HomePage import HomePage
-from pages.ElectionPage import ElectionPage
+from src.utils.style import *
+from src.data import getData, getAvailableYears
+from src.components.dashboard.tabsNavigator import TabsNavigator
+from src.components.common.header import Header
+from src.pages.HomePage import HomePage
+from src.pages.ElectionPage import ElectionPage
 
 def launchDashboard():
     print("Lancement du dashboard...")
@@ -49,13 +45,6 @@ def launchDashboard():
     pages = [homePage, election_page]
     header = Header(app, tabs_navigator, available_years, pages)
 
-    # app.layout = html.Div(
-    #     [
-    #         tabs_navigator.get_tabs_component(),
-    #         tabs_navigator.get_content_container(),
-    #         header.get_content()
-    #     ]
-    # )
     app.layout = dbc.Container(
         [
             dbc.Col(
@@ -80,22 +69,6 @@ def launchDashboard():
 
     home_content = homePage.get_content()
     election_content = election_page.get_content()
-
-    # election_content = html.Div([
-    #     tabs_navigator.get_tab_description(1),
-    # ])
-
-    compare_content = html.Div([
-        tabs_navigator.get_tab_description(2),
-    ])
-
-    by_time_content = html.Div([
-        tabs_navigator.get_tab_description(3),
-    ])
-
-    by_politics_content = html.Div([
-        tabs_navigator.get_tab_description(4),
-    ])
 
     # -------------------------------------------------------------------
     # 4. Callback de mise à jour
@@ -124,9 +97,6 @@ def launchDashboard():
         contents = [
             home_content,       # 0
             election_content,   # 1
-            compare_content,    # 2
-            by_time_content,    # 3
-            by_politics_content # 4
         ]
         
         if (0 <= tab_index < len(contents)):

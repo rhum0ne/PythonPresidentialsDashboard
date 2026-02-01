@@ -1,5 +1,5 @@
 from dash import html
-from utils.style import *
+from src.utils.style import *
 
 class MainDataPanel:
     def __init__(self):

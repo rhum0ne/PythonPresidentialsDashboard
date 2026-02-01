@@ -1,10 +1,10 @@
 from typing import Callable as function
 from dash import Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
-from components.dashboard.tabsNavigator import TabsNavigator
-from components.dashboard.yearSelector import YearSelector
-from components.dashboard.roundSelector import RoundSelector
-from components.dashboard.variableSelector import VariableSelector
+from src.components.dashboard.tabsNavigator import TabsNavigator
+from src.components.dashboard.yearSelector import YearSelector
+from src.components.dashboard.roundSelector import RoundSelector
+from src.components.dashboard.variableSelector import VariableSelector
 
 class Header:
     def __init__(self, app: Dash, tabsNavigator: TabsNavigator, available_years: list, pages: list):

@@ -4,20 +4,14 @@ from dash import html, dcc, Input, Output
 class TabsNavigator:
     
     def __init__(self):
-        self.labels = ["Home", "Election", "Compare", "By Time", "By Politics"]
+        self.labels = ["Home", "Election"]
         self.icons = [
             "fa-solid fa-house",
             "fa-solid fa-check-to-slot", 
-            "fa-solid fa-scale-balanced",
-            "fa-solid fa-chart-line",
-            "fa-solid fa-palette"
         ]
         self.descriptions = [
             "Vue d'ensemble des données électorales par département",
             "Informations détaillées sur une année d'élection spécifique",
-            "Comparaison entre différentes élections ou départements",
-            "Evolution d'une variable au fil du temps",
-            "Evolution d'une couleur politique à travers les élections"
         ]
         self.selected_tab = 0
         self.nb_tabs = len(self.labels)
