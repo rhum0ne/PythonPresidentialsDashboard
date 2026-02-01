@@ -9,6 +9,7 @@ années et tours.
 ## Installation du projet
 
 Nous recommandons l'utilisation d'un **environnement virtuel**.
+Dépo git du projet : https://github.com/rhum0ne/PythonPresidentialsDashboard.git
 
 ### 1️. Cloner le projet et se placer dans le dossier
 
@@ -114,21 +115,22 @@ Ce dashboard permet d'observer que :
 • Sélection de l'année et du tour\
 • Carte de France par départements interactive\
 • Indicateurs clés globaux par éléction\
-• Visualisations par département\
+• Visualisations par département
 
 ---
 
 ## © Auteurs
 
 Romain ELETUFE et Anthony PRADIER,
+
 Nous déclarons sur l'honneur que le code a été développé par nous-même.
 
 ---
 
 ## Technologies utilisées
 
-- Python\
-- Dash\
-- Plotly\
-- Pandas\
+- Python
+- Dash
+- Plotly
+- Pandas
 - numpy
