@@ -29,14 +29,15 @@ class ElectionPage:
         def update_histogram(variable, year, round_value):
             print("update histogram")
             interpreter = getData(year)
-            
+            print(interpreter.getGlobalData(round_value).head())
+            print("variable before : ", variable)
             if(variable == "Abstentions"):
                 variable = interpreter.getAbstentionsColumnName()
             if(variable == "Blancs"):
                 variable = interpreter.getBlancsColumnName()
             if(variable == "Nuls"):
                 variable = interpreter.getNulsColumnName()
-                
+            print("variable after :", variable)
             columns = [
                 interpreter.getDepartmentCodeColumnName(),
                 variable

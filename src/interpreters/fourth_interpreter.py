@@ -76,7 +76,7 @@ class FourthInterpreter(Interpreter):
         return "Blancs et nuls"
     
     def getNulsColumnName(self) -> str:
-        return "Blancs et Nuls"
+        return "Blancs et nuls"
 
     def getDepartment4MainData(self, tour: int, department_code: str) -> dict[str, int]:
         df = self.getGlobalData(tour)
